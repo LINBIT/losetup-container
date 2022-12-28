@@ -18,22 +18,12 @@ fn main() -> Result<(), Error> {
     let mut args = env::args();
     let _prog_name = args.next().ok_or("Expected program name")?;
 
-    let original_losetup =
-        env::var_os("LO_SHIM_ORIGINAL_EXEC").unwrap_or("/usr/sbin/losetup".into());
-
-    let raw_locations = env::var_os("LO_SHIM_BIND_MOUNTS")
-        .map(OsStringExt::into_vec)
-        .unwrap_or_default();
-
-    let extra_locations: Vec<_> = raw_locations
-        .split(|b| *b == b'\n')
-        .filter(|s| !s.is_empty())
-        .map(bytes_to_path)
-        .collect();
-
-    match (args.next(), args.next(), args.next()) {
-        (Some(a), Some(b), Some(c)) if a == "-l" && b == "-O" && c == "NAME,BACK-FILE" => (),
+    match (args.next(), args.next(), args.next(), args.next()) {
+        (Some(a), Some(b), Some(c), None) if a == "-l" && b == "-O" && c == "NAME,BACK-FILE" => (),
         _ => {
+            let original_losetup =
+                env::var_os("LO_SHIM_ORIGINAL_EXEC").unwrap_or("/usr/sbin/losetup".into());
+
             if !process::Command::new(original_losetup)
                 .args(env::args_os().skip(1))
                 .status()?
@@ -45,6 +35,16 @@ fn main() -> Result<(), Error> {
             return Ok(());
         }
     }
+
+    let raw_locations = env::var_os("LO_SHIM_BIND_MOUNTS")
+        .map(OsStringExt::into_vec)
+        .unwrap_or_default();
+
+    let extra_locations: Vec<_> = raw_locations
+        .split(|b| *b == b'\n')
+        .filter(|s| !s.is_empty())
+        .map(bytes_to_path)
+        .collect();
 
     println!("NAME       BACK-FILE");
     for entry in fs::read_dir("/sys/block")? {
