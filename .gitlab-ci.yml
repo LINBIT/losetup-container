@@ -1,3 +1,15 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH == 'main'
+
+test:rustfmt:
+  image: rust:1
+  script:
+    - cargo fmt -- --version && cargo fmt -- --print-config current .
+    - cargo fmt -- --check
+
 test:compat:
   variables:
     CARGO_HOME: $CI_PROJECT_DIR/.cargo
