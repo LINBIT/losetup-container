@@ -4,10 +4,11 @@ use std::ffi;
 use std::fs;
 use std::io;
 use std::mem;
-use std::os::fd::AsRawFd;
+use std::os::raw;
 use std::os::unix::ffi::OsStrExt;
 use std::os::unix::ffi::OsStringExt;
 use std::os::unix::fs::MetadataExt;
+use std::os::unix::io::AsRawFd;
 use std::path;
 use std::process;
 
@@ -118,7 +119,7 @@ fn find_backing_file(
 
 const LO_NAME_SIZE: usize = 64;
 const LO_KEY_SIZE: usize = 32;
-const LOOP_GET_STATUS64: ffi::c_ulong = 0x4C05;
+const LOOP_GET_STATUS64: raw::c_ulong = 0x4C05;
 
 #[repr(C)]
 struct LoopInfo64 {
@@ -138,7 +139,7 @@ struct LoopInfo64 {
 }
 
 extern "C" {
-    pub fn ioctl(fd: ffi::c_int, request: ffi::c_ulong, ...) -> ffi::c_int;
+    pub fn ioctl(fd: raw::c_int, request: raw::c_ulong, ...) -> raw::c_int;
 }
 
 fn loop_get_backing_file_and_inode(dev_path: &path::Path) -> Result<(path::PathBuf, u64), Error> {
@@ -147,7 +148,7 @@ fn loop_get_backing_file_and_inode(dev_path: &path::Path) -> Result<(path::PathB
     let mut info = mem::MaybeUninit::<LoopInfo64>::zeroed();
     let ret = unsafe {
         ioctl(
-            loop_dev.as_raw_fd() as ffi::c_int,
+            loop_dev.as_raw_fd() as raw::c_int,
             LOOP_GET_STATUS64,
             info.as_mut_ptr(),
         )

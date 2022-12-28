@@ -5,7 +5,7 @@ workflow:
     - if: $CI_COMMIT_BRANCH == 'main'
 
 test:rustfmt:
-  image: rust:1
+  image: $CI_REGISTRY/linbit/linbit-admin-backend/test-image
   script:
     - cargo fmt -- --version && cargo fmt -- --print-config current .
     - cargo fmt -- --check
