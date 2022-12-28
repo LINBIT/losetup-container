@@ -64,7 +64,7 @@ fn main() -> Result<(), Error> {
 
         let dev_name = path::Path::new("/dev").join(&name);
 
-        let backing_file = match find_backing_file(&dev_name, entry.path(), &extra_locations) {
+        let backing_file = match find_backing_file(&dev_name, &entry.path(), &extra_locations) {
             Ok(p) => p,
             Err(e) => {
                 eprintln!(
@@ -84,7 +84,7 @@ fn main() -> Result<(), Error> {
 
 fn find_backing_file(
     dev_path: &path::Path,
-    sys_path: path::PathBuf,
+    sys_path: &path::Path,
     extra_locations: &[&path::Path],
 ) -> Result<path::PathBuf, Error> {
     let mut candidate_locations = Vec::new();
