@@ -41,7 +41,7 @@ fn main() -> Result<(), Error> {
         .unwrap_or_default();
 
     let extra_locations: Vec<_> = raw_locations
-        .split(|b| *b == b'\n')
+        .split(|b| *b == b':')
         .filter(|s| !s.is_empty())
         .map(bytes_to_path)
         .collect();

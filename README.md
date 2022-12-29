@@ -34,7 +34,7 @@ try to find the right backing file. It does that as follows:
     original file name is limited to 64 characters, it might have been truncated. Add it to the list of candidates.
   * Read `/sys/block/loopX/loop/backing_file`, which contains the backing file, potentially truncated to the path to
     the last mount point, as seen in the example above. Add it to the list of candidates.
-  * Read the `LOSETUP_CONTAINER_BIND_MOUNTS` variable. It contains a newline delimited list of paths that will be
+  * Read the `LOSETUP_CONTAINER_BIND_MOUNTS` variable. It contains a colon (':') delimited list of paths that will be
     checked. For each entry, join the path from `loop/backing_file`, adding it to the list of candidates.
   * Check each candidate, if it exists, and the inode of the file matches the reported inode from the `ioctl()`, we
     found the current path of the backing file.
