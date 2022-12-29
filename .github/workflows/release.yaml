@@ -32,3 +32,5 @@ jobs:
           bin: losetup-container
           target: ${{ matrix.target }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Always use cross, as it uses old-enough libc
+          build_tool: cross
