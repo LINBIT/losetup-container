@@ -21,8 +21,8 @@ fn main() -> Result<(), Error> {
     match (args.next(), args.next(), args.next(), args.next()) {
         (Some(a), Some(b), Some(c), None) if a == "-l" && b == "-O" && c == "NAME,BACK-FILE" => (),
         _ => {
-            let original_losetup =
-                env::var_os("LO_SHIM_ORIGINAL_EXEC").unwrap_or("/usr/sbin/losetup".into());
+            let original_losetup = env::var_os("LOSETUP_CONTAINER_ORIGINAL_LOSETUP")
+                .unwrap_or("/usr/sbin/losetup".into());
 
             if !process::Command::new(original_losetup)
                 .args(env::args_os().skip(1))
@@ -36,7 +36,7 @@ fn main() -> Result<(), Error> {
         }
     }
 
-    let raw_locations = env::var_os("LO_SHIM_BIND_MOUNTS")
+    let raw_locations = env::var_os("LOSETUP_CONTAINER_BIND_MOUNTS")
         .map(OsStringExt::into_vec)
         .unwrap_or_default();
 
