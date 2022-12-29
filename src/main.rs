@@ -175,8 +175,13 @@ fn loop_get_backing_file_and_inode(dev_path: &path::Path) -> Result<(path::PathB
 
 fn read_sys_backing_file(p: &path::Path) -> Result<path::PathBuf, Error> {
     let raw = fs::read(p)?;
-    // Remove leading '/' and trailing '\n'
-    let trimmed = &raw[1..raw.len() - 1];
+    let mut trimmed = &raw[..];
+    if let Some(t) = trimmed.strip_prefix(b"/") {
+        trimmed = t
+    }
+    if let Some(t) = trimmed.strip_suffix(b"\n") {
+        trimmed = t
+    }
     Ok(ffi::OsStr::from_bytes(trimmed).into())
 }
 
