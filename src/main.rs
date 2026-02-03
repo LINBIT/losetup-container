@@ -114,7 +114,7 @@ fn find_backing_file(
     }
 
     // Fall back to the same output as the normal losetup
-    return Ok(path::Path::new("/").join(&sys_backing_file));
+    Ok(path::Path::new("/").join(&sys_backing_file))
 }
 
 const LO_NAME_SIZE: usize = 64;
@@ -138,12 +138,12 @@ struct LoopInfo64 {
     lo_init: [u64; 2],
 }
 
-extern "C" {
+unsafe extern "C" {
     pub fn ioctl(fd: raw::c_int, request: raw::c_ulong, ...) -> raw::c_int;
 }
 
 fn loop_get_backing_file_and_inode(dev_path: &path::Path) -> Result<(path::PathBuf, u64), Error> {
-    let loop_dev = fs::File::open(&dev_path)?;
+    let loop_dev = fs::File::open(dev_path)?;
 
     let mut info = mem::MaybeUninit::<LoopInfo64>::zeroed();
     let ret = unsafe {

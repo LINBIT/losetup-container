@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      ci:
+        patterns:
+          - "*" # Include all cargo update in one PR
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      ci:
+        patterns:
+          - "*" # Include all github-actions update in one PR
